@@ -1,15 +1,16 @@
 import axios from "axios";
-import type { AxiosRequestConfig } from "axios";
+import type { AxiosRequestConfig, InternalAxiosRequestConfig } from "axios";
 import { useToastStore } from "../store/toastStore";
 
 export const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL ? `${import.meta.env.VITE_API_URL}/api` : "http://localhost:5000/api",
 });
 
-api.interceptors.request.use((config: AxiosRequestConfig) => {
+api.interceptors.request.use((config: InternalAxiosRequestConfig) => {
   const token = localStorage.getItem("token");
-  if (token && config.headers) {
-    (config.headers as Record<string, string>).Authorization = `Bearer ${token}`;
+  if (token) {
+    config.headers = config.headers ?? {};
+    (config.headers as Record<string, string>)["Authorization"] = `Bearer ${token}`;
   }
   return config;
 });
