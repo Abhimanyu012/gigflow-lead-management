@@ -274,6 +274,14 @@ It connects to MongoDB, creates a default admin user if one does not exist, or u
 - Update `CLIENT_URL`, `VITE_API_URL`, and `MONGO_URI` for your production environment.
 - If you use Docker in production, the provided `docker-compose.yml` and Dockerfiles are already set up for the three-service stack.
 
+Production backend URL:
+
+- `https://gigflow-lead-management.onrender.com` — this is the production API base URL used for deployed frontends. Make sure `VITE_API_URL` (frontend) or `CLIENT_URL` (backend CORS) point to the correct production endpoints.
+
+Security note:
+
+- If any credentials (database URIs, secrets) were ever committed or shared accidentally, rotate those secrets immediately (database users, API keys, JWT secret). Never commit production secrets into git; keep them in environment variables or secret managers.
+
 ## Security and Access Control
 
 - Passwords are hashed with bcrypt before storage.
