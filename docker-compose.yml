@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:6
+    container_name: gigflow-mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - gigflow-data:/data/db
+    restart: always
+
+  backend:
+    build:
+      context: ./server
+    container_name: gigflow-backend
+    ports:
+      - "5000:5000"
+    environment:
+      - PORT=5000
+      - MONGO_URI=mongodb://mongodb:27017/gigflow
+      - JWT_SECRET=AdminSuperSecretKey2026!
+      - JWT_EXPIRES_IN=7d
+      - CLIENT_URL=http://localhost:3000
+      - NODE_ENV=production
+    depends_on:
+      - mongodb
+    restart: always
+
+  frontend:
+    build:
+      context: ./client
+    container_name: gigflow-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - VITE_API_URL=http://localhost:5000
+    depends_on:
+      - backend
+    restart: always
+
+volumes:
+  gigflow-data:

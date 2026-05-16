@@ -1,0 +1,25 @@
+type ClassValue = ClassArray | ClassDictionary | string | number | null | boolean | undefined;
+type ClassDictionary = Record<string, any>;
+type ClassArray = ClassValue[];
+
+export function cn(...inputs: ClassValue[]): string {
+  const classes: string[] = [];
+
+  for (const input of inputs) {
+    if (!input) continue;
+
+    if (typeof input === "string" || typeof input === "number") {
+      classes.push(input.toString());
+    } else if (Array.isArray(input)) {
+      classes.push(cn(...input));
+    } else if (typeof input === "object") {
+      for (const key in input) {
+        if (input[key]) {
+          classes.push(key);
+        }
+      }
+    }
+  }
+
+  return classes.join(" ");
+}
