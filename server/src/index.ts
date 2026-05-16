@@ -14,7 +14,19 @@ import mongoose from "mongoose";
 const app = express();
 
 app.use(helmet());
-app.use(cors({ origin: env.CLIENT_URL }));
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      // allow non-browser requests (e.g. curl, server-to-server)
+      if (!origin) return callback(null, true);
+      // support comma-separated allowed origins in env and normalize trailing slashes
+      const allowed = (env.CLIENT_URL || "").split(",").map((u) => u.trim().replace(/\/$/, ""));
+      const reqOrigin = origin.replace(/\/$/, "");
+      if (allowed.includes(reqOrigin)) return callback(null, true);
+      return callback(new Error("CORS origin denied"));
+    },
+  })
+);
 app.use(morgan("dev"));
 app.use(express.json({ limit: "10kb" }));
 
